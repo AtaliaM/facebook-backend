@@ -8,8 +8,8 @@ const { findByIdAndUpdate } = require('./models/user');
 const app = express();
 const port = process.env.PORT || 3000;
 
-//configuring exporess to automatically parse the incoming json for us,
-//so we have it as an objext we can use
+//configuring express to automatically parse the incoming json for us,
+//so we have it as an object we can use
 app.use(express.json());
 app.use(cors());
 
