@@ -4,7 +4,7 @@ const Post = require("../models/post");
 const auth = require("../middleware/auth");
 const { findOneAndDelete } = require('../models/post');
 
-
+//add post//
 router.post("/posts", auth, async (req, res) => {
     // const post = new post(req.body);
     const post = new Post({
@@ -23,6 +23,7 @@ router.post("/posts", auth, async (req, res) => {
     console.log(post);
 })
 
+//edit post//
 router.patch("/posts/:id", auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ["postBody"];
@@ -55,7 +56,7 @@ router.patch("/posts/:id", auth, async (req, res) => {
     }
 })
 
-
+//get all posts of a specific user//
 router.get("/posts", auth, async (req, res) => {
 
     try {
@@ -68,6 +69,7 @@ router.get("/posts", auth, async (req, res) => {
 
 })
 
+//get a specific user post by id//
 router.get("/posts/:id", auth, async (req, res) => {
     const _id = req.params.id;
 
@@ -85,6 +87,7 @@ router.get("/posts/:id", auth, async (req, res) => {
 
 })
 
+//delete a specific post by id//
 router.delete("/posts/:id",auth, async (req, res) => {
     try {
         // const post = await post.findByIdAndDelete(req.params.id);
