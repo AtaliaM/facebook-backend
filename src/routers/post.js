@@ -25,7 +25,7 @@ router.post("/posts", auth, async (req, res) => {
 
 router.patch("/posts/:id", auth, async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["description", "complete"];
+    const allowedUpdates = ["postBody"];
     const isValidOperation = updates.every((update) => {
         return allowedUpdates.includes(update);
     })
