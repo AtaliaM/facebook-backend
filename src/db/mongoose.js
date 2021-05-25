@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/facebook-api', {
+let MONGODB_URI = process.env.ATLAS_URI || "mongodb://127.0.0.1:27017/facebook-api";
+
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
     useFindAndModify: false
 })
-
 
 
 // const me = new User({
