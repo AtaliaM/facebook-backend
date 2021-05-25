@@ -55,7 +55,7 @@ router.post('/users/logoutAll', auth, async (req,res) => {
 })
 
 //fetching all users-for dev purposes//
-router.get('/users', auth, async (req, res) => {
+router.get('/users', async (req, res) => {
     try {
         const users = await User.find({});
         res.send(users);
