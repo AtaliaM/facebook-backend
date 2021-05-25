@@ -3,7 +3,7 @@ const User = require('../models/user');
 const auth = require('../middleware/auth');
 const router = new express.Router();
 
-
+//register/add new user//
 router.post('/users', async (req, res) => {
     console.log(req.body);
     const user = new User(req.body);
@@ -17,6 +17,7 @@ router.post('/users', async (req, res) => {
     }
 })
 
+//login user//
 router.post('/users/login', async (req,res)=> {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password);
@@ -27,6 +28,7 @@ router.post('/users/login', async (req,res)=> {
     }
 })
 
+//logout user//
 router.post('/users/logout', auth, async (req,res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token)=> {
@@ -40,6 +42,7 @@ router.post('/users/logout', auth, async (req,res) => {
     }
 })
 
+//logout user fron all devices//
 router.post('/users/logoutAll', auth, async (req,res) => {
     try {
         req.user.tokens = [];
@@ -51,17 +54,18 @@ router.post('/users/logoutAll', auth, async (req,res) => {
     }
 })
 
-//fetching all users//
-// router.get('/users', auth, async (req, res) => {
-//     try {
-//         const users = await User.find({});
-//         res.send(users);
-//     } catch (e) {
-//         res.status(500).send();
-//     }
+//fetching all users-for dev purposes//
+router.get('/users', auth, async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.send(users);
+    } catch (e) {
+        res.status(500).send();
+    }
     
-// })
+})
 
+//my profile//
 router.get('/users/me', auth, async (req, res) => {
     res.send(req.user);
 })
@@ -82,6 +86,7 @@ router.get('/users/me', auth, async (req, res) => {
 
 // })
 
+//update my profile//
 router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['name', 'password', 'email', 'age'];
@@ -107,6 +112,7 @@ router.patch('/users/me', auth, async (req, res) => {
 
 })
 
+//delete my profile//
 router.delete('/users/me', auth, async (req,res)=> {
     try {
         await req.user.remove();
