@@ -10,6 +10,8 @@ const environment = process.env.NODE_ENV || 'development';
 console.log(environment);
 const host = '0.0.0.0';
 
+
+
 //configuring express to automatically parse the incoming json for us,
 //so we have it as an object we can use
 app.use(express.json());
