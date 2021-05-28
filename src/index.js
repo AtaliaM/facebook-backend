@@ -6,6 +6,8 @@ const postRouter = require("./routers/post");
 
 const app = express();
 const port = process.env.PORT || 3000;
+const environment = process.env.NODE_ENV || 'development';
+console.log(environment);
 const host = '0.0.0.0';
 
 //configuring express to automatically parse the incoming json for us,
