@@ -6,7 +6,7 @@ const postRouter = require("./routers/post");
 
 const app = express();
 const port = process.env.PORT || 7000;
-const environment = process.env.NODE_ENV || 'prod';
+const environment = process.env.NODE_ENV || 'production';
 console.log(environment);
 console.log(process.env.NODE_ENV);
 const host = '0.0.0.0';
