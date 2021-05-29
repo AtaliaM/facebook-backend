@@ -5,9 +5,10 @@ const userRouter = require("./routers/user");
 const postRouter = require("./routers/post");
 
 const app = express();
-const port = process.env.PORT || 3000;
-const environment = process.env.NODE_ENV || 'development';
+const port = process.env.PORT || 7000;
+const environment = process.env.NODE_ENV || 'prod';
 console.log(environment);
+console.log(process.env.NODE_ENV);
 const host = '0.0.0.0';
 
 
