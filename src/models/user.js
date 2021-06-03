@@ -40,9 +40,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
         minlength: 7,
-        trim:true,
+        trim: true,
         validate(value) {
-            if(value.toLowerCase().includes("password")) {
+            if (value.toLowerCase().includes("password")) {
                 throw new Error("password cannot contain 'password'")
             }
         }
@@ -52,7 +52,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             require: true
         }
-    }]
+    }],
+    path: {
+        type: String,
+    },
 
 })
 
@@ -64,7 +67,7 @@ userSchema.virtual('posts', {
     foreignField: 'owner'
 })
 
-userSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
 
@@ -76,24 +79,24 @@ userSchema.methods.toJSON = function() {
 
 userSchema.methods.generateAuthToken = async function () { // instance method
     const user = this;
-    const token = jwt.sign({_id : user._id.toString()}, 'thisismyawesomefacebookapp');
+    const token = jwt.sign({ _id: user._id.toString() }, 'thisismyawesomefacebookapp');
 
-    user.tokens = user.tokens.concat({token});
+    user.tokens = user.tokens.concat({ token });
     await user.save();
 
     return token;
 }
 
-userSchema.statics.findByCredentials = async (email,password) => { //model method
-    const user = await User.findOne({email});
+userSchema.statics.findByCredentials = async (email, password) => { //model method
+    const user = await User.findOne({ email });
 
-    if(!user) {
+    if (!user) {
         throw new Error("Unable to login");
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
 
-    if(!isMatched) {
+    if (!isMatched) {
         throw new Error("Unable to login");
     }
 
@@ -104,20 +107,20 @@ userSchema.statics.findByCredentials = async (email,password) => { //model metho
 userSchema.pre('save', async function (next) {
     const user = this;
 
-    if(user.isModified('password')) { //when user created and when user changes password
-        user.password = await bcrypt.hash(user.password,8);
+    if (user.isModified('password')) { //when user created and when user changes password
+        user.password = await bcrypt.hash(user.password, 8);
     }
 
     next();
 })
 
 //deletes user's posts when user is removed//
-userSchema.pre('remove',  async function(next) {
+userSchema.pre('remove', async function (next) {
     const user = this;
-    await Post.deleteMany({owner: user._id});
+    await Post.deleteMany({ owner: user._id });
 
     next();
-}) 
+})
 
 
 const User = mongoose.model('User', userSchema);

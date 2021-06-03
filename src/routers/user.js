@@ -6,7 +6,11 @@ const router = new express.Router();
 //register/add new user//
 router.post('/users', async (req, res) => {
     console.log(req.body);
-    const user = new User(req.body);
+    //creating user's path//
+    const path = `${req.body.firstName}-${new Date().getTime()}`;
+    const userObj = {...req.body, path};
+
+    const user = new User(userObj);
     try {
         await user.save();
         const token = await user.generateAuthToken();
@@ -70,21 +74,22 @@ router.get('/users/me', auth, async (req, res) => {
     res.send(req.user);
 })
 
+//get user by path//
+router.get('/users/:path', async (req, res) => {
+    const path = req.params.path;
+    try {
+        const user = await User.find({path});
+        // console.log(user)
+        // const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.send(user);
+    } catch (e) {
+        res.status(500).send();
+    }
 
-// router.get('/users/:id', async (req, res) => {
-//     const _id = req.params.id;
-
-//     try {
-//         const user = await User.findById(_id);
-//         if (!user) {
-//             return res.status(404).send();
-//         }
-//         res.send(user);
-//     } catch (e) {
-//         res.status(500).send();
-//     }
-
-// })
+})
 
 //update my profile//
 router.patch('/users/me', auth, async (req, res) => {
