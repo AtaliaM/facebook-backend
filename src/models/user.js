@@ -4,6 +4,21 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Post = require('./post');
 
+//sub schemas//
+const myFollowers = mongoose.Schema({
+    userId: {
+        type: String,
+    }
+}, { _id : false });
+
+const usersIFollow = mongoose.Schema({
+    userId: {
+        type: String,
+    }
+}, { _id : false });
+
+//user schema//
+
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -56,8 +71,11 @@ const userSchema = new mongoose.Schema({
     path: {
         type: String,
     },
+    myFollowers: [myFollowers],
+    usersIFollow: [usersIFollow]
 
 })
+
 
 //virtual property-not an actual data stored in the database, it's a relationship between 2 entities.
 //a way for mongoose to figure out how this 2 things are related
