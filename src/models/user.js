@@ -77,8 +77,6 @@ const userSchema = new mongoose.Schema({
 })
 
 
-//virtual property-not an actual data stored in the database, it's a relationship between 2 entities.
-//a way for mongoose to figure out how this 2 things are related
 userSchema.virtual('posts', {
     ref: 'Post',
     localField: '_id',
@@ -95,7 +93,7 @@ userSchema.methods.toJSON = function () {
     return userObject;
 }
 
-userSchema.methods.generateAuthToken = async function () { // instance method
+userSchema.methods.generateAuthToken = async function () { 
     const user = this;
     const token = jwt.sign({ _id: user._id.toString() }, 'thisismyawesomefacebookapp');
 
@@ -105,7 +103,7 @@ userSchema.methods.generateAuthToken = async function () { // instance method
     return token;
 }
 
-userSchema.statics.findByCredentials = async (email, password) => { //model method
+userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email });
 
     if (!user) {
