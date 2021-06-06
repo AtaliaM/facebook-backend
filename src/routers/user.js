@@ -18,11 +18,9 @@ defineDeleteMyProfileEndpoint();
 function defineRegisterUserEndpoint() {
     return (
         router.post('/users', async (req, res) => {
-            console.log(req.body);
             //creating user's path//
             const path = `${req.body.firstName}-${new Date().getTime()}`;
             const userObj = { ...req.body, path };
-        
             const user = new User(userObj);
             try {
                 await user.save();
@@ -45,7 +43,7 @@ function defineLoginUserEndpoint() {
                 const token = await user.generateAuthToken();
                 res.send({ user, token });
             } catch (e) {
-                res.status(400).send();
+                res.status(400).send("one or more of your credentials is incorrect");
             }
         })
     )
@@ -111,7 +109,7 @@ function defineGetUserByPathEndpoint() {
                 const user = await User.find({ path });
                 // const user = await User.findById(_id);
                 if (!user) {
-                    return res.status(404).send();
+                    return res.status(404).send("User not found");
                 }
                 res.send(user);
             } catch (e) {
@@ -131,7 +129,7 @@ function defineAddToMyFollowingEndpoint() {
                 const userToFollow = await User.findOneAndUpdate({ path }, 
                     {$addToSet: {myFollowers: {userId: req.user._id}}});
                 if (!userToFollow) {
-                    return res.status(404).send();
+                    return res.status(404).send("User not found");
                 }
                 await req.user.updateOne(
                     { $addToSet: { usersIFollow: { userId: userToFollow._id } } }
@@ -153,7 +151,7 @@ function defineRemoveUserFromMyFollowingEndpoint() {
                 const userToUnfollow = await User.findOneAndUpdate({ path }, 
                     { $pull: { myFollowers: { userId: req.user._id } } });
                 if (!userToUnfollow) {
-                    return res.status(404).send();
+                    return res.status(404).send("User not found");
                 }
                 await req.user.updateOne(
                     { $pull: { usersIFollow: { userId: userToUnfollow._id } } }
