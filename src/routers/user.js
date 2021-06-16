@@ -122,10 +122,10 @@ function defineGetUserByPathEndpoint() {
 
 function defineGetUserByIdEndpoint() {
     return (
-        router.get('/users/:id', async (req, res) => {
+        router.get('/users/id/:id', async (req, res) => {
             const _id = req.params.id;
             try {
-                const user = await User.findById(_id);
+                const user = await User.findById({_id});
                 if (!user) {
                     return res.status(404).send("User not found");
                 }

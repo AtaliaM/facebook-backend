@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require("cors");
-require("./db/mongoose");
+try {
+    require("./db/mongoose");
+    console.log("success")
+} catch(e) {
+    console.log("fail");
+}
 const userRouter = require("./routers/user");
 const postRouter = require("./routers/post");
 
