@@ -62,10 +62,10 @@ function defineEditPostEndpoint() {
 
 function defineGetAllPostsByUserEndpoint() {
     return (
-        router.get("/posts", auth, async (req, res) => {
-        
+        router.get("/posts/user/:id", async (req, res) => {
+        const userId = req.params.id;
             try {
-                const posts = await Post.find({ owner: req.user._id });
+                const posts = await Post.find({ owner: userId });
                 res.send(posts);
             }
             catch (e) {
@@ -75,6 +75,23 @@ function defineGetAllPostsByUserEndpoint() {
         })
     )
 }
+
+//get all user posts endpoint with auth//
+// function defineGetAllPostsByUserEndpoint() {
+//     return (
+//         router.get("/posts", auth, async (req, res) => {
+        
+//             try {
+//                 const posts = await Post.find({ owner: req.user._id });
+//                 res.send(posts);
+//             }
+//             catch (e) {
+//                 res.status(500).send();
+//             }
+        
+//         })
+//     )
+// }
 
 function defineGetSpecificPostByIdEndpoint() {
     return (
