@@ -64,8 +64,10 @@ function defineGetAllPostsByUserEndpoint() {
     return (
         router.get("/posts/user/:id", async (req, res) => {
         const userId = req.params.id;
+        console.log(userId)
             try {
                 const posts = await Post.find({ owner: userId });
+                console.log(posts)
                 res.send(posts);
             }
             catch (e) {
