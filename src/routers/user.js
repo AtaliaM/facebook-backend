@@ -1,3 +1,4 @@
+const multer = require('multer');
 const express = require('express');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
@@ -9,6 +10,7 @@ definelogoutUserEndpoint();
 defineLogoutAllDevicesUserEndpoint();
 defineGetAllUsersEndpoint();
 defineGetUserProfileEndpoint();
+definePostUserAvatarEndpoint();
 defineGetUserByPathEndpoint();
 defineGetUserByIdEndpoint();
 defineAddToMyFollowingEndpoint();
@@ -57,7 +59,7 @@ function definelogoutUserEndpoint() {
                 req.user.tokens = req.user.tokens.filter((token) => {
                     return token.token !== req.token;
                 })
-        
+
                 await req.user.save();
                 res.send();
             } catch (e) {
@@ -102,6 +104,28 @@ function defineGetUserProfileEndpoint() {
     )
 }
 
+function definePostUserAvatarEndpoint() {
+    const upload = multer({
+        dest: 'avatars',
+        limits: {
+            fileSize: 5000000
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(jpg|JPG|png|PNG|jpeg|JPEG)$/)) {
+                return cb(new Error("file must be a JPG/PNG/JPEG only"))
+            }
+            cb(undefined, true)
+        }
+    })
+    return (
+        router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+            res.send();
+        }, (error, req, res, next) => {
+            res.status(400).send({ error: error.message })
+        })
+    )
+}
+
 function defineGetUserByPathEndpoint() {
     return (
         router.get('/users/:path', async (req, res) => {
@@ -125,7 +149,7 @@ function defineGetUserByIdEndpoint() {
         router.get('/users/id/:id', async (req, res) => {
             const _id = req.params.id;
             try {
-                const user = await User.findById({_id});
+                const user = await User.findById({ _id });
                 if (!user) {
                     return res.status(404).send("User not found");
                 }
@@ -143,8 +167,8 @@ function defineAddToMyFollowingEndpoint() {
             const path = req.body.path;
             try {
                 // const userToFollow = await User.find({ path });
-                const userToFollow = await User.findOneAndUpdate({ path }, 
-                    {$addToSet: {myFollowers: {userId: req.user._id}}});
+                const userToFollow = await User.findOneAndUpdate({ path },
+                    { $addToSet: { myFollowers: { userId: req.user._id } } });
                 if (!userToFollow) {
                     return res.status(404).send("User not found");
                 }
@@ -152,7 +176,7 @@ function defineAddToMyFollowingEndpoint() {
                     { $addToSet: { usersIFollow: { userId: userToFollow._id } } }
                 );
                 res.send(req.user);
-        
+
             } catch (e) {
                 res.status(400).send(e);
             }
@@ -165,7 +189,7 @@ function defineRemoveUserFromMyFollowingEndpoint() {
         router.patch('/users/me/unfollowUser', auth, async (req, res) => {
             const path = req.body.path;
             try {
-                const userToUnfollow = await User.findOneAndUpdate({ path }, 
+                const userToUnfollow = await User.findOneAndUpdate({ path },
                     { $pull: { myFollowers: { userId: req.user._id } } });
                 if (!userToUnfollow) {
                     return res.status(404).send("User not found");
@@ -174,7 +198,7 @@ function defineRemoveUserFromMyFollowingEndpoint() {
                     { $pull: { usersIFollow: { userId: userToUnfollow._id } } }
                 );
                 res.send(req.user);
-        
+
             } catch (e) {
                 res.status(400).send(e);
             }
@@ -191,11 +215,11 @@ function defineUpdateMyProfileEndpoint() {
             const isValidOperation = updates.every((update) => {
                 return allowedUpdates.includes(update);
             })
-        
+
             if (!isValidOperation) {
                 return res.status(400).send({ error: "Invalid Updates" });
             }
-        
+
             try {
                 // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
                 updates.forEach((update) => {
