@@ -272,6 +272,9 @@ function defineDeleteMyProfileEndpoint() {
     return (
         router.delete('/users/me', auth, async (req, res) => {
             try {
+                //need to add: remove user from other user's following if he deletes his profile//
+                const users = await User.find({});
+                
                 await req.user.remove();
                 res.send(req.user);
             } catch (e) {
