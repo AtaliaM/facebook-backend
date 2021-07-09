@@ -250,6 +250,7 @@ function definePostUserAvatarEndpoint() {
     })
     return (
         router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+            console.log(req.file.buffer)
             const buffer = await sharp(req.file.buffer).resize({ width: 500, height: 500 }).png().toBuffer();
             req.user.avatar = buffer;
             await req.user.save();
