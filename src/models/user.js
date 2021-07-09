@@ -74,6 +74,9 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: Buffer
     },
+    header: {
+        type: Buffer
+    },
     myFollowers: [myFollowers],
     usersIFollow: [usersIFollow]
 

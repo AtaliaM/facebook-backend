@@ -14,6 +14,9 @@ defineGetUserProfileEndpoint();
 definePostUserAvatarEndpoint();
 defineDeleteUserAvatarEndpoint();
 defineGetUserAvatarEndpoint();
+definePostUserHeaderEndpoint();
+defineDeleteUserHeaderEndpoint();
+defineGetUserHeaderEndpoint();
 defineGetUserByPathEndpoint();
 defineGetUserByIdEndpoint();
 defineAddToMyFollowingEndpoint();
@@ -104,59 +107,6 @@ function defineGetUserProfileEndpoint() {
         router.get('/users/me', auth, async (req, res) => {
             res.send(req.user);
         })
-    )
-}
-
-function definePostUserAvatarEndpoint() {
-    const upload = multer({
-        limits: {
-            fileSize: 5000000
-        },
-        fileFilter(req, file, cb) {
-            if (!file.originalname.match(/\.(jpg|JPG|png|PNG|jpeg|JPEG)$/)) {
-                return cb(new Error("file must be a JPG/PNG/JPEG only"))
-            }
-            cb(undefined, true)
-        }
-    })
-    return (
-        router.post('/users/me/avatar',auth, upload.single('avatar'), async(req, res) => {
-            const buffer = await sharp(req.file.buffer).resize({width:500, height:500}).png().toBuffer();
-            req.user.avatar = buffer;
-            await req.user.save();
-            res.send();
-        }, (error, req, res, next) => {
-            res.status(400).send({ error: error.message })
-        })
-    )
-}
-
-function defineDeleteUserAvatarEndpoint() {
-    return (
-        router.delete('/users/me/avatar',auth, async(req, res) => {
-            req.user.avatar = undefined;
-            await req.user.save();
-            res.send();
-        }, (error, req, res, next) => {
-            res.status(400).send({ error: error.message })
-        })
-    )
-}
-
-function defineGetUserAvatarEndpoint() {
-    return (
-        router.get('/users/:id/avatar', async(req,res)=> {
-            try {
-                const user = await User.findById(req.params.id);
-                if(!user || !user.avatar) {
-                    throw new Error("No image found for this user")
-                }
-                res.set('Content-Type', 'image/png');
-                res.send(user.avatar);
-            }catch(e) {
-                res.status(404).send();
-            }
-        } )
     )
 }
 
@@ -274,11 +224,119 @@ function defineDeleteMyProfileEndpoint() {
             try {
                 //need to add: remove user from other user's following if he deletes his profile//
                 const users = await User.find({});
-                
+
                 await req.user.remove();
                 res.send(req.user);
             } catch (e) {
                 res.status(500).send()
+            }
+        })
+    )
+}
+
+//file related endpoints//
+
+function definePostUserAvatarEndpoint() {
+    const upload = multer({
+        limits: {
+            fileSize: 5000000
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(jpg|JPG|png|PNG|jpeg|JPEG)$/)) {
+                return cb(new Error("file must be a JPG/PNG/JPEG only"))
+            }
+            cb(undefined, true)
+        }
+    })
+    return (
+        router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+            const buffer = await sharp(req.file.buffer).resize({ width: 500, height: 500 }).png().toBuffer();
+            req.user.avatar = buffer;
+            await req.user.save();
+            res.send();
+        }, (error, req, res, next) => {
+            res.status(400).send({ error: error.message })
+        })
+    )
+}
+
+function defineDeleteUserAvatarEndpoint() {
+    return (
+        router.delete('/users/me/avatar', auth, async (req, res) => {
+            req.user.avatar = undefined;
+            await req.user.save();
+            res.send();
+        }, (error, req, res, next) => {
+            res.status(400).send({ error: error.message })
+        })
+    )
+}
+
+function defineGetUserAvatarEndpoint() {
+    return (
+        router.get('/users/:id/avatar', async (req, res) => {
+            try {
+                const user = await User.findById(req.params.id);
+                if (!user || !user.avatar) {
+                    throw new Error("No image found for this user")
+                }
+                res.set('Content-Type', 'image/png');
+                res.send(user.avatar);
+            } catch (e) {
+                res.status(404).send();
+            }
+        })
+    )
+}
+
+function definePostUserHeaderEndpoint() {
+    const upload = multer({
+        limits: {
+            fileSize: 5000000
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(jpg|JPG|png|PNG|jpeg|JPEG)$/)) {
+                return cb(new Error("file must be a JPG/PNG/JPEG only"))
+            }
+            cb(undefined, true)
+        }
+    })
+    return (
+        router.post('/users/me/header', auth, upload.single('header'), async (req, res) => {
+            const buffer = await sharp(req.file.buffer).resize({ width: 600, height: 400 }).png().toBuffer();
+            req.user.header = buffer;
+            await req.user.save();
+            res.send();
+        }, (error, req, res, next) => {
+            res.status(400).send({ error: error.message })
+        })
+    )
+}
+
+function defineDeleteUserHeaderEndpoint() {
+    return (
+        router.delete('/users/me/header', auth, async (req, res) => {
+            req.user.header = undefined;
+            await req.user.save();
+            res.send();
+        }, (error, req, res, next) => {
+            res.status(400).send({ error: error.message })
+        })
+    )
+}
+
+function defineGetUserHeaderEndpoint() {
+    return (
+        router.get('/users/:id/header', async (req, res) => {
+            try {
+                const user = await User.findById(req.params.id);
+                if (!user || !user.header) {
+                    throw new Error("No image found for this user")
+                }
+                res.set('Content-Type', 'image/png');
+                res.send(user.header);
+            } catch (e) {
+                res.status(404).send();
             }
         })
     )
